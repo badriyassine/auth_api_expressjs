@@ -1,8 +1,11 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { connectdb, getdb } from "./db.js";
 
-require ("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const app = express();
 const port = 3000;
@@ -13,48 +16,81 @@ app.use(express.json());
 app.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
+    const db = getdb();
 
     // find user if exist
-    const finduser = users.find((i) => i.username === username);
+    const finduser = await db.collection("users").findOne({ username });
     if (finduser) {
-      res.status(400).send("user already exist");
+      return res.status(400).send("user already exist");
     }
 
     // hashing password
     const hashpassword = await bcrypt.hash(password, 10);
-    users.push({ username, password: hashpassword });
+
+    // adding user to db
+    await db
+      .collection("users")
+      .insertOne({ username, password: hashpassword });
     res.status(201).send("user registered successfuly");
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 });
 
-
 // login
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
+    const db = getdb();
 
     // find user if exist
-    const finduser = users.find((i) => i.username === username);
+    const finduser = await db.collection("users").findOne({ username });
     if (!finduser) {
       res.status(400).send("user doesn't exist, Please register first");
     }
 
     // verfiy hashed code
     const isMatch = await bcrypt.compare(password, finduser.password);
-    if (isMatch) {
-      res.status(200).send(`welcome back ${username}`);
+    if (!isMatch) {
+      return res.status(400).send("invalid username or password");
     }
-    res.status(400).send("username or password incorecct");
+
+    // generate token
+    const token = jwt.sign(
+      { userId: finduser._id, username: finduser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+    );
+    res.status(200).send({ token });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 });
 
+// middleware to verify token
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send("access denied, no token provided");
+  }
+  const token = authHeader.split(" ")[1]; // Bearer <token>
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).send("invalid token");
+  }
+};
 
+// profile
+app.get("/profile", authMiddleware, async (req, res) => {
+  res.json({ message: "welcome to your profile", user: req.user });
+});
 
 // start server
-app.listen(port, () => {
-  console.log(`server running in ${port}`);
+connectdb().then(() => {
+  app.listen(port, () => {
+    console.log(`server running in ${port}`);
+  });
 });
