@@ -46,7 +46,7 @@ app.post("/login", async (req, res) => {
     // find user if exist
     const finduser = await db.collection("users").findOne({ username });
     if (!finduser) {
-      res.status(400).send("user doesn't exist, Please register first");
+      return res.status(400).send("invalid username or password");
     }
 
     // verfiy hashed code
