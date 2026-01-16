@@ -61,7 +61,7 @@ app.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
-    res.status(200).send({ token });
+    res.status(200).send({ token, username });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
