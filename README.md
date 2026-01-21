@@ -36,9 +36,7 @@ cd auth_api_expressjs
 3. Open `terminal`  run this commands `npm install`
    then `npm start`.
 
-```
 ---
-
 ## ⚙️ Technologies Used
 
 - Node.js
