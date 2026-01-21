@@ -33,8 +33,12 @@ git clone https://github.com/badriyassine/auth_api_expressjs.git
 cd auth_api_expressjs
 ```
 
-3. Open `terminal`  run this commands `npm install`
+3. Open `terminal`:
    then `npm start`.
+
+```bash
+run this commands `npm install`, then `npm start`.
+```   
 
 ---
 ## ⚙️ Technologies Used
