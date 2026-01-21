@@ -55,6 +55,6 @@ run this commands `npm install`, then `npm start`.
 
 ## 👤 Author
 
-Made by [**ERROR**](https://github.com/bdriyassine)
+Made by [**BADRI YASSINE**](https://github.com/bdriyassine)
 
 ---
