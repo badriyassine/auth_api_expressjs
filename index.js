@@ -6,7 +6,6 @@ import { connectdb, getdb } from "./db.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-
 const app = express();
 const port = 3000;
 
@@ -62,6 +61,40 @@ app.post("/login", async (req, res) => {
       { expiresIn: "1h" },
     );
     res.status(200).send({ token, username });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+
+// delete account
+app.delete("/users", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const db = getdb();
+
+    // find user if exist
+    const finduser = await db.collection("users").findOne({ username });
+    if (!finduser) {
+      return res.status(400).send("invalid username or password");
+    }
+
+    // verfiy hashed code
+    const isMatch = await bcrypt.compare(password, finduser.password);
+    if (!isMatch) {
+      return res.status(400).send("invalid username or password");
+    }
+
+    // generate token
+    const token = jwt.sign(
+      { userId: finduser._id, username: finduser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+    );
+
+    // delete account
+    await db.collection("users").deleteOne({ username });
+
+    res.status(200).send("account deleted");
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
