@@ -1,12 +1,15 @@
 import express from "express";
+import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { connectdb, getdb } from "./db.js";
 
 import dotenv from "dotenv";
+import { ObjectId } from "mongodb";
 dotenv.config();
 
 const app = express();
+app.use(cors());
 const port = 3000;
 
 app.use(express.json());
@@ -91,6 +94,11 @@ app.delete("/users", async (req, res) => {
       { expiresIn: "1h" },
     );
 
+    // profile
+    app.get("/profile", authMiddleware, async (req, res) => {
+      res.json({ message: "welcome to your profile", user: req.user });
+    });
+
     // delete account
     await db.collection("users").deleteOne({ username });
 
@@ -116,14 +124,71 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// profile
-app.get("/profile", authMiddleware, async (req, res) => {
-  res.json({ message: "welcome to your profile", user: req.user });
-});
-
 // start server
 connectdb().then(() => {
   app.listen(port, () => {
     console.log(`server running in ${port}`);
   });
+});
+
+// get clients
+app.get("/clients", authMiddleware, async (req, res) => {
+  const clients = await db.collection("clients").find().toArray();
+  res.json(clients);
+});
+
+// add clients
+app.post("/clients", authMiddleware, async (req, res) => {
+  const result = await db.collection("clients").insertOne(req, body);
+  res.json(result);
+});
+
+// delete clients
+app.delete("/clients/:id", authMiddleware, async (req, res) => {
+  await db.collection("clients").deleteOne({
+    _id: new ObjectId(req.params.id),
+  });
+  res.json({ message: "clients deleted" });
+});
+
+// update clients
+app.put("/clients/:id", authMiddleware, async (req, res) => {
+  await db.collection("clients").updateOne(
+    {
+      _id: new ObjectId(req.params.id),
+    },
+    { $set: req.body },
+  );
+  res.json({ message: "clients upated" });
+});
+
+// get clients
+app.get("/clients", authMiddleware, async (req, res) => {
+  const clients = await db.collection("clients").find().toArray();
+  res.json(clients);
+});
+
+// add clients
+app.post("/clients", authMiddleware, async (req, res) => {
+  const result = await db.collection("clients").insertOne(req, body);
+  res.json(result);
+});
+
+// delete clients
+app.delete("/clients/:id", authMiddleware, async (req, res) => {
+  await db.collection("clients").deleteOne({
+    _id: new ObjectId(req.params.id),
+  });
+  res.json({ message: "clients deleted" });
+});
+
+// update clients
+app.put("/clients/:id", authMiddleware, async (req, res) => {
+  await db.collection("clients").updateOne(
+    {
+      _id: new ObjectId(req.params.id),
+    },
+    { $set: req.body },
+  );
+  res.json({ message: "clients updated" });
 });
