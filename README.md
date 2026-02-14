@@ -4,7 +4,17 @@ Backend-only authentication API built with Express.js, implementing Register and
 
 ---
 
-## 🌟 Features
+## Table of Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#How to run it)
+- [Technologies Used](#Technologies Used)
+- [Author](#Author)
+
+---
+
+## Features
 
 - Register new users
 - Login existing users
@@ -13,13 +23,13 @@ Backend-only authentication API built with Express.js, implementing Register and
 - JSON Web Token (JWT) for authentication
 
 ---
-## 📋 Requirements
+## Requirements
 
 - node.js & mongodb installed on your machine.
 
 ---
 
-## 💻 How to run it
+## How to run it
 
 1. Clone the repository:
 
@@ -41,7 +51,7 @@ run this commands `npm install`, then `npm start`.
 ```   
 
 ---
-## ⚙️ Technologies Used
+## Technologies Used
 
 - Node.js
 - Express.js  
@@ -53,7 +63,7 @@ run this commands `npm install`, then `npm start`.
 
 ---
 
-## 👤 Author
+## Author
 
 ---
 
