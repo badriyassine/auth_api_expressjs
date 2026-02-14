@@ -8,8 +8,8 @@ Backend-only authentication API built with Express.js, implementing Register and
 
 - [Features](#features)
 - [Requirements](#requirements)
-- [Installation](#How to run it)
-- [Technologies Used](#Technologies Used)
+- [Installation](#how-to-run-it)
+- [Technologies Used](#technologies-used)
 - [Author](#Author)
 
 ---
